@@ -6,4 +6,4 @@ WIP of an adventure dog who will dodge obstacles, collect items, and bark!!
 https://github.com/squiggers/dog-venture
 
 #Demo
-https://squiggers.github.io/dog-venture/
+https://tic.computer/play?cart=453
