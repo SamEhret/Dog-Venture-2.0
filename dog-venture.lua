@@ -41,6 +41,7 @@ function init()
   player.stopped=true
   player.dead=false
   player.barking=false
+		player.flip=0
 	
 	screen={}
 		screen.width=30
@@ -57,25 +58,25 @@ end
 
 init()
 
+function is_solid()
+end
+
+function can_move()
+end
+
 function move()
  player.moving=true
  player.stopped=false
 end
 
---cycles sprites when moving
 function animate_move()
+	--cycles sprites when moving
  player.step=player.step+1
- if(player.step%6==0) then player.sprite=player.sprite+2 end
- if(player.sprite>258) then player.sprite=256 end
+	if(player.step%6==0) then player.sprite=player.sprite+2 end
+	if(player.sprite>258) then player.sprite=256 end
 end
 
-function TIC()
-	map(screen.x, screen.y, screen.width, screen.height)
-	spr(player.sprite, player.x, player.y, 0, 1, 0, 0, player.width, player.height)
-
-	player.moving=false
- player.stopped=true
-
+function player_movement()
 	--buttons to move and bark
 	--left
 	if btn(2) then
@@ -110,18 +111,24 @@ function TIC()
   player.stopped=false  
   sfx(0)
  end
-	
+end
+
+function player_stopped()
 	--stnading sprite
 	if player.stopped then
   player.step=0
   player.sprite=260
  end
-	
+end
+
+function player_jump()
 	--jump animation
 	if player.airborn and not player.barking then
   player.sprite=262
  end
-	
+end
+
+function player_bark()
 	--bark animation
 	if player.barking then
   if player.airborn then
@@ -135,7 +142,9 @@ function TIC()
    player.barking=false
   end
 	end
-	
+end
+
+function player_speed()
 	--player movement speed
 	if player.speed.x>player.max_speed then
  	player.speed.x=player.max_speed
@@ -145,16 +154,22 @@ function TIC()
  end
  player.x=player.x+player.speed.x
  player.y=player.y+player.speed.y
-	
+end
+
+function apply_gravity()
 	--apply gravity
  player.speed.y=player.speed.y+gravity
-	
+end
+
+function apply_friction()
 	--apply friction
 	if not player.airborn and not btn(2) and not btn(3) then
   player.speed.x=player.speed.x/friction
  end
-	
-	 --checking player position against screen bounds
+end
+
+function player_position()
+	--checking player position against screen bounds
 	if player.x<0 then
 	 player.x=0
 	 player.dead=true
@@ -170,6 +185,31 @@ function TIC()
 	 player.y=world_floor_height-player.height
 	  player.speed.y=0
 	  player.airborn=false
+	end
+end
+
+function TIC()
+	map(screen.x, screen.y, screen.width, screen.height)
+	spr(player.sprite, player.x, player.y, 0, 1, player.flip, 0, player.width, player.height)
+
+	player.moving=false
+ player.stopped=true
+
+	player_movement()
+	player_stopped()
+	player_jump()
+	player_bark()
+	player_speed()
+	
+	apply_gravity()
+	apply_friction()
+	
+	player_position()
+	
+	if player.direction==1 then
+		player.flip=0
+	else
+		player.flip=1
 	end
 end
 
