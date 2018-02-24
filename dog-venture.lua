@@ -59,7 +59,7 @@ end
 init()
 
 function draw()
-	if not game_running then
+	if not game_running and not game_win then
   if title_tick % 10 == 0 then
    if title_action_color == 5 then
      title_action_color = 8
@@ -71,15 +71,34 @@ function draw()
 		print("z = bark \nx = action \narrow keys = move", 5, 115, 7)
   print("~a dog's adventure~", 70, 42, 8)
 	else
+		print('score: '..game_score, 5, 5, 0)
 	end
 end
 
 function update()
+	--Game Not Started
 	if not game_running then
   title_tick=title_tick+1
   if btnp(5) then
     game_running=true
+				game_score=0
+				game_win=false
   end
+	--Game Running
+	else
+		score_count=score_count+1
+  if score_count>30 then
+   score_count=0
+   game_score=game_score+1
+  end
+	 if game_score==10 then
+   game_win=true
+  end
+	end
+	if game_win then
+		game_running=false
+		print("you win!!", 100, 42, 0)
+  print("press x to play again", 66, 65, 0)
 	end
 end
 
