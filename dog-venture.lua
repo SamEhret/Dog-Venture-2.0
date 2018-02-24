@@ -58,6 +58,31 @@ end
 
 init()
 
+function draw()
+	if not game_running then
+  if title_tick % 10 == 0 then
+   if title_action_color == 5 then
+     title_action_color = 8
+   else
+     title_action_color = 5
+   end
+  end
+		print("press x to start", 77, 65, title_action_color)
+		print("z = bark \nx = action \narrow keys = move", 5, 115, 7)
+  print("~a dog's adventure~", 70, 42, 8)
+	else
+	end
+end
+
+function update()
+	if not game_running then
+  title_tick=title_tick+1
+  if btnp(5) then
+    game_running=true
+  end
+	end
+end
+
 function solid(x,y)
 	return solids[mget((x)//8,(y)//8)]
 end
@@ -227,7 +252,9 @@ end
 function TIC()
 	map(screen.x, screen.y, screen.width, screen.height)
 	spr(player.sprite, player.x, player.y, 0, 1, player.flip, 0, player.width, player.height)
-
+	update()
+	draw()
+	
 	player.moving=false
  player.stopped=true
 
