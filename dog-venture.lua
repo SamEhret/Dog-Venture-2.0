@@ -113,7 +113,8 @@ function update()
 	if player.dead then
 		cls()
   print("game over", 95, 50, 7)
-		spr(266, 113, 65, 0, 1, 0, 0, player.width, player.height)
+		print("press x to play again", 66, 65, 7)
+		spr(266, 113, 75, 0, 1, 0, 0, player.width, player.height)
 		game_running=false
 	end
 	if game_win then
@@ -326,9 +327,10 @@ function update_map()
  	if map_count==24 then
 			map_level.x=map_level.x+1
 			map_count=1
-			if not player.airborn then
+	-- this is causing floating
+--			if not player.airborn then
 				player.x=player.x-8
-			end
+--			end
 		end
 		if map_level.x==210 then
 			map_level.x=0
