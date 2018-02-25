@@ -86,7 +86,7 @@ function draw()
      title_action_color=5
    end
   end
-		print("press x to start",77,65, title_action_color)
+		print("press x to start",77,65,title_action_color)
 		print("z = bark \nx = action \narrow keys = move",5,115,7)
   print("~a dog's adventure~",70,42,8)
 	else
@@ -248,7 +248,7 @@ function player_speed_fast()
 		if status_countdown==0 then
 			player.max_speed=2
 			status_countdown=5
-			player.slow=false
+			player.fast=false
 		end
 	end
 end
@@ -535,7 +535,7 @@ function player_lives()
 end
 
 function status_effect()
-	if player.slow or player.fast then
+	if player.slow==true or player.fast==true then
 		print(status_countdown,5,20,title_action_color)
 	end
 end
