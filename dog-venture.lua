@@ -47,6 +47,7 @@ function init()
   player.dead=false
   player.barking=false
 		player.flip=0
+		player.lives=3
 	
 	screen={}
 		screen.width=30
@@ -351,6 +352,29 @@ function confetti()
 	end
 end
 
+function player_lives()
+	if game_running then
+		if player.lives==3 then
+			spr(288,5,10,0)
+			spr(288,14,10,0)
+			spr(288,23,10,0)
+		end
+		if player.lives==2 then
+			spr(288,5,10,0)
+			spr(288,14,10,0)
+			spr(289,23,10,0)
+		end
+		if player.lives==1 then
+			spr(288,5,10,0)
+			spr(289,14,10,0)
+			spr(289,23,10,0)
+		end
+		if player_lives==0 then
+			player.dead=true
+		end
+	end
+end
+
 function TIC()
 	--removed cam_place at end of map
 	map(map_level.x, map_level.y, map_level.width+1, map_level.height)
@@ -369,6 +393,7 @@ function TIC()
 	player_bark()
 	player_position()
 	player_facing()
+	player_lives()
 	
 	apply_gravity()
 	apply_friction()
@@ -515,6 +540,8 @@ end
 -- 029:444448004444c800444cc8008484880084848000848480008884800000888000
 -- 030:084888c4084cccc40884cc44008444440884444488c4cc888444888088888000
 -- 031:44444c484444cc48444444884488848088808480800088800000000000000000
+-- 032:0000000008800880811881f88111111881111118081111800081180000088000
+-- 033:00000000088008808ff88ff88ffffff88ffffff808ffff80008ff80000088000
 -- </SPRITES>
 
 -- <MAP>
