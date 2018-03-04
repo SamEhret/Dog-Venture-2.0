@@ -72,6 +72,8 @@ function init()
 	
 	game={}
 		game.lvl=0
+	
+	sync(false)
 end
 
 
