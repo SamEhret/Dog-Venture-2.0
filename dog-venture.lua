@@ -4,556 +4,466 @@
 -- script: lua
 
 function init()
-	solids={[5]=true,[6]=true}
-	pickups_heal={[64]=true,[69]=true}
-	pickups_hurt={[68]=true,[73]=true,[88]=true,[89]=true,[104]=true,[105]=true}
-	pickups_slow={[65]=true}
-	pickups_fast={[66]=true}
-	gravity=9.81/30
- friction=5
- camerax=0
- game_running=false
- game_win=false
- draw_title=true
- title_tick=0
- title_action_color=0
- frame_count=0
- game_score=0
- score_count=0
- music_started=false
-	jump_count=0
-	map_count=0
-	cam_count=0
-	cam_place=0
-	status_countdown=5
-	status_tic=0
-	
-	player={}
-		player.width=2
-		player.height=2
-		player.width_pixel=8*player.width
-		player.height_pixel=8*player.height
-		player.x=120
-		player.y=64
-		player.vx=0
-		player.vy=0
-		player.sprite=260
-		player.step=0
-  player.direction=1
-  player.airborn=false
-  player.acceleration=2
-  player.jump=5
-		player.max_speed=2
-		player.speed={}
-	 player.speed.x=0
-	 player.speed.y=0
-		player.moving=false
-  player.stopped=true
-  player.dead=false
-  player.barking=false
-		player.flip=0
-		player.lives=3
-		player.slow=false
-		player.fast=false
-	
-	screen={}
-		screen.width=30
-		screen.height=17
-		screen.width_pixel=8*screen.width-player.width_pixel
-		screen.height_pixel=8*screen.height
-		screen.x=0
-		screen.y=0
-	
-	map_level={}
-		map_level.x=0
-		map_level.y=0
-		map_level.width=30
-		map_level.height=17
-	
-	game={}
-		game.lvl=0
-	
-	sync(false)
-end
+	solids = {[5] = true, [6] = true}
+	pickups_heal = {[64] = true, [69] = true}
+	pickups_hurt = {[68] = true, [73] = true, [88] = true, [89] = true, [104] = true, [105] = true}
+	pickups_slow = {[65] = true}
+	pickups_fast = {[66] = true}
+	gravity = 9.81 / 30
+	friction = 5
+	game_running = false
+	game_win = false
+	music_started = false
+	title_tick = 0
+	title_action_color = 0
+	frame_count = 0
+	game_score = 0
+	score_count = 0
+	map_count = 0
+	cam_count = 0
+	cam_place = 0
+	status_countdown = 5
+	status_tic = 0
 
+	player = {}
+		player.width = 2
+		player.height = 2
+		player.x = 120
+		player.y = 64
+		player.sprite = 260
+		player.step = 0
+		player.direction = 1
+		player.airborn = false
+		player.acceleration = 2
+		player.jump = 5
+		player.max_speed = 2
+		player.speed = {}
+		player.speed.x = 0
+		player.speed.y = 0
+		player.moving = false
+		player.stopped = true
+		player.dead = false
+		player.barking = false
+		player.flip = 0
+		player.lives = 3
+		player.slow = false
+		player.fast = false
+
+	map_level = {}
+		map_level.x = 0
+		map_level.y = 0
+		map_level.width = 30
+		map_level.height = 17
+		map_level.width_pixel = 240
+		map_level.height_pixel = 136
+
+	game = {}
+		game.lvl = 0
+
+	sync(alse)
+end
 
 init()
 
 function draw()
 	if not game_running and not game_win and not player.dead then
-  if title_tick%10==0 then
-   if title_action_color==5 then
-     title_action_color=8
-   else
-     title_action_color=5
-   end
-  end
-		print("press x to start",77,65,title_action_color)
-		print("z = bark \nx = action \narrow keys = move",5,115,7)
-  print("~a dog's adventure~",70,42,8)
+		if title_tick % 10 == 0 then
+			if title_action_color == 5 then
+				title_action_color = 8
+			else
+				title_action_color = 5
+			end
+		end
+		print("press x to start", 77, 65, title_action_color)
+		print("z = bark \nx = action \narrow keys = move", 5, 115, 7)
+		print("~a dog's adventure~", 70, 42, 8)
 	else
-		print('score: '..game_score,5,5,0)
+		print("score: " .. game_score, 5, 5, 0)
 	end
 end
 
 function update()
 	--Game Not Started
 	if not game_running then
-  title_tick=title_tick+1
-  if btnp(5) then
+		--Game Running
+		title_tick = title_tick + 1
+		if btnp(5) then
 			if player.dead then
 				init()
 			elseif game_win then
 				init()
 			else
-				player.dead=false
-	   game_running=true
-				game_score=0
-				game_win=false
-  	end
+				player.dead = false
+				game_running = true
+				game_score = 0
+				game_win = false
+			end
 		end
-	--Game Running
 	else
-		score_count=score_count+1
-  if score_count>30 then
-   score_count=0
-   game_score=game_score+1
-  end
+		score_count = score_count + 1
+		if score_count > 30 then
+			score_count = 0
+			game_score = game_score + 1
+		end
 	end
 	if player.dead then
 		cls()
-  print("game over", 95, 50, 7)
+		print("game over", 95, 50, 7)
 		print("press x to play again", 66, 65, 7)
 		spr(266, 113, 75, 0, 1, 0, 0, player.width, player.height)
-		game_running=false
+		game_running = false
 	end
 	if game_win then
-		game_running=false
+		game_running = false
 		print("you win!!", 100, 42, 0)
-  print("press x to play again", 66, 65, 0)
+		print("press x to play again", 66, 65, 0)
 	end
 end
 
-function solid(x,y)
-	return solids[mget((x+(map_level.x*8))//8,(y+(map_level.y*8))//8)]
+-- Check for any pickup *****
+function check_pickup()
+	sprite_touching = {[(player.x + 1 + (map_level.x * 8)) // 8] = ((player.y + 1 + (map_level.y * 8)) // 8), [(player.x + 1 + (map_level.x * 8)) // 8] = ((player.y + 15 + (map_level.y * 8)) // 8), [(player.x + 15 + (map_level.x * 8)) // 8] = ((player.y + 1 + (map_level.y * 8)) // 8), [(player.x + 8 + (map_level.x * 8)) // 8] = ((player.y + 8 + (map_level.y * 8)) // 8), [(player.x + 15 + (map_level.x * 8)) // 8] = ((player.y + 15 + (map_level.y * 8)) // 8)}
+	for k, v in pairs(sprite_touching) do
+		if pickups_heal[mget(k, v)] then
+			mset(k, v, 4)
+			player_pickup_heal()
+		elseif pickups_hurt[mget(k,v)] then
+			mset(k, v, 4)
+			player_pickup_hurt()
+		elseif pickups_fast[mget(k,v)] then
+			mset(k, v, 4)
+			player.fast = true
+		elseif pickups_slow[mget(k,v)] then
+			mset(k, v, 4)
+			player.slow = true
+		end
+	end
 end
 
-function heal_player(x,y)
-	return pickups_heal[mget((x+(map_level.x*8))//8,(y+(map_level.y*8))//8)]
-end
-
-function hurt_player(x,y)
-	return pickups_hurt[mget((x+(map_level.x*8))//8,(y+(map_level.y*8))//8)]
-end
-
-function slow_player(x,y)
-return pickups_slow[mget((x+(map_level.x*8))//8,(y+(map_level.y*8))//8)]
-end
-
-function fast_player(x,y)
-return pickups_fast[mget((x+(map_level.x*8))//8,(y+(map_level.y*8))//8)]
+function solid(x, y)
+	return solids[mget((x + (map_level.x * 8)) // 8, (y + (map_level.y * 8)) // 8)]
 end
 
 function move()
- player.moving=true
- player.stopped=false
+	player.moving = true
+	player.stopped = false
 end
 
 function player_pickup_heal()
 	--check if heal item is touched
-	if heal_player(player.x+1,player.y+1) then
-		if player.lives<3 then
-			player.lives=player.lives+1
-		else
-			game_score=game_score+5
-		end
-		mset((player.x+1+(map_level.x*8))//8,(player.y+1+(map_level.y*8))//8,4)
-	elseif heal_player(player.x+1,player.y+15) then
-		if player.lives<3 then
-			player.lives=player.lives+1
-		else
-			game_score=game_score+5
-		end
-		mset((player.x+1+(map_level.x*8))//8,(player.y+15+(map_level.y*8))//8,4)
-	elseif  heal_player(player.x+15,player.y+1) then
-		if player.lives<3 then
-			player.lives=player.lives+1
-		else
-			game_score=game_score+5
-		end
-		mset((player.x+15+(map_level.x*8))//8,(player.y+1+(map_level.y*8))//8,4)
-	elseif heal_player(player.x+15,player.y+15) then
-		if player.lives<3 then
-			player.lives=player.lives+1
-		else
-			game_score=game_score+5
-		end
-		mset((player.x+15+(map_level.x*8))//8,(player.y+15+(map_level.y*8))//8,4)
-	elseif heal_player(player.x+8,player.y+8) then
-		if player.lives<3 then
-			player.lives=player.lives+1
-		else
-			game_score=game_score+5
-		end
-		mset((player.x+8+(map_level.x*8))//8,(player.y+8+(map_level.y*8))//8,4)
+	if player.lives < 3 then
+		player.lives = player.lives + 1
+	else
+		game_score = game_score + 5
 	end
 end
 
 function player_pickup_hurt()
-	--check if hurt item is touched
-	if hurt_player(player.x+1,player.y+1) then
-		player.lives=player.lives-1
-		mset((player.x+1+(map_level.x*8))//8,(player.y+1+(map_level.y*8))//8,4)
-	elseif hurt_player(player.x+1,player.y+15) then
-		player.lives=player.lives-1
-		mset((player.x+1+(map_level.x*8))//8,(player.y+15+(map_level.y*8))//8,4)
-	elseif  hurt_player(player.x+15,player.y+1) then
-		player.lives=player.lives-1
-		mset((player.x+15+(map_level.x*8))//8,(player.y+1+(map_level.y*8))//8,4)
-	elseif hurt_player(player.x+15,player.y+15) then
-		player.lives=player.lives-1
-		mset((player.x+15+(map_level.x*8))//8,(player.y+15+(map_level.y*8))//8,4)
-	elseif hurt_player(player.x+8,player.y+8) then
-		player.lives=player.lives-1
-		mset((player.x+8+(map_level.x*8))//8,(player.y+8+(map_level.y*8))//8,4)
-	end
+	player.lives = player.lives - 1
 end
 
 function player_speed_slow()
-	if player.slow==true then
-		status_tic=status_tic+1
-		if status_tic==30 then
-			status_tic=0
-			status_countdown=status_countdown-1
+	if player.slow == true then
+		status_tic = status_tic + 1
+		if status_tic == 30 then
+			status_tic = 0
+			status_countdown = status_countdown - 1
 		end
-		if status_countdown>0 then
-			player.max_speed=1
+		if status_countdown > 0 then
+			player.max_speed = 1
 		end
-		if status_countdown==0 then
-			player.max_speed=2
-			status_countdown=5
-			player.slow=false
+		if status_countdown == 0 then
+			player.max_speed = 2
+			status_countdown = 5
+			player.slow = false
 		end
 	end
 end
 
 function player_speed_fast()
-	if player.fast==true then
-		status_tic=status_tic+1
-		if status_tic==30 then
-			status_tic=0
-			status_countdown=status_countdown-1
+	if player.fast == true then
+		status_tic = status_tic + 1
+		if status_tic == 30 then
+			status_tic = 0
+			status_countdown = status_countdown - 1
 		end
-		if status_countdown>0 then
-			player.max_speed=4
+		if status_countdown > 0 then
+			player.max_speed = 4
 		end
-		if status_countdown==0 then
-			player.max_speed=2
-			status_countdown=5
-			player.fast=false
+		if status_countdown == 0 then
+			player.max_speed = 2
+			status_countdown = 5
+			player.fast = false
 		end
-	end
-end
-
-function player_pickup_slow()
-	--check if slow item is touched
-	if slow_player(player.x+1,player.y+1) then
-		player.slow=true
-		mset((player.x+1+(map_level.x*8))//8,(player.y+1+(map_level.y*8))//8,4)
-	elseif slow_player(player.x+1,player.y+15) then
-		player.slow=true
-		mset((player.x+1+(map_level.x*8))//8,(player.y+15+(map_level.y*8))//8,4)
-	elseif  slow_player(player.x+15,player.y+1) then
-		player.slow=true
-		mset((player.x+15+(map_level.x*8))//8,(player.y+1+(map_level.y*8))//8,4)
-	elseif slow_player(player.x+15,player.y+15) then
-		player.slow=true
-		mset((player.x+15+(map_level.x*8))//8,(player.y+15+(map_level.y*8))//8,4)
-	elseif slow_player(player.x+8,player.y+8) then
-		player.slow=true
-		mset((player.x+8+(map_level.x*8))//8,(player.y+8+(map_level.y*8))//8,4)
-	end
-end
-
-function player_pickup_fast()
-	--check if fast item is touched
-	if fast_player(player.x+1,player.y+1) then
-		player.fast=true
-		mset((player.x+1+(map_level.x*8))//8,(player.y+1+(map_level.y*8))//8,4)
-	elseif fast_player(player.x+1,player.y+15) then
-		player.fast=true
-		mset((player.x+1+(map_level.x*8))//8,(player.y+15+(map_level.y*8))//8,4)
-	elseif  fast_player(player.x+15,player.y+1) then
-		player.fast=true
-		mset((player.x+15+(map_level.x*8))//8,(player.y+1+(map_level.y*8))//8,4)
-	elseif fast_player(player.x+15,player.y+15) then
-		player.fast=true
-		mset((player.x+15+(map_level.x*8))//8,(player.y+15+(map_level.y*8))//8,4)
-	elseif fast_player(player.x+8,player.y+8) then
-		player.fast=true
-		mset((player.x+8+(map_level.x*8))//8,(player.y+8+(map_level.y*8))//8,4)
 	end
 end
 
 function player_can_move()
 	--check collision
 	--check sides
-	if solid(player.x+player.speed.x,player.y+player.speed.y-gravity)
-		or solid(player.x+player.speed.x,player.y+15+player.speed.y-gravity)
-		or solid(player.x+16+player.speed.x,player.y+player.speed.y-gravity)
-		or solid(player.x+16+player.speed.x,player.y+15+player.speed.y-gravity) then
-   player.speed.x=0
-			player.airborn=false
+	if
+		solid(player.x + player.speed.x - cam_place, player.y + player.speed.y - gravity) or
+		solid(player.x + player.speed.x - cam_place, player.y + 15 + player.speed.y - gravity) or
+		solid(player.x + 16 + player.speed.x - cam_place, player.y + player.speed.y - gravity) or
+		solid(player.x + 16 + player.speed.x - cam_place, player.y + 15 + player.speed.y - gravity)
+		then
+			player.speed.x = 0
+			player.airborn = false
 	else
-		player.airborn=true
+		player.airborn = true
 	end
-	
+
 	--check bottom
 	--took out player.speed.x from both
-	if solid(player.x,player.y+16-gravity) 
-		or solid(player.x+16,player.y+16-gravity) then
-			if not btnp(0) then
-				player.speed.y=0
-				player.airborn=false
-			end
+	if solid(player.x, player.y + 16 - gravity) or solid(player.x + 16, player.y + 16 - gravity) then
+		if not btnp(0) then
+			player.speed.y = 0
+			player.airborn = false
+		end
 	else
-		player.airborn=true
+		player.airborn = true
 	end
 end
 
 function animate_move()
 	--cycles sprites when moving
- player.step=player.step+1
-	if(player.step%6==0) then player.sprite=player.sprite+2 end
-	if(player.sprite>258) then player.sprite=256 end
+	player.step = player.step + 1
+	if (player.step % 6 == 0) then
+		player.sprite = player.sprite + 2
+	end
+	if (player.sprite > 258) then
+		player.sprite = 256
+	end
 end
 
 function player_movement()
 	--buttons to move and bark
 	--left
 	if btn(2) then
-		player.direction=0
-  	player.speed.x=player.speed.x-player.acceleration
-    animate_move()
-   move()
-	--right
+		--right
+		player.direction = 0
+		player.speed.x = player.speed.x - player.acceleration
+		animate_move()
+		move()
 	elseif btn(3) then
-  player.direction=1
-   player.speed.x=player.speed.x+player.acceleration
-    animate_move()
-   move()
+		player.direction = 1
+		player.speed.x = player.speed.x + player.acceleration
+		animate_move()
+		move()
 	end
 	--down
 	if btn(1) then
-		if player.airborn==true then
-  	player.speed.y=player.speed.y+player.acceleration
-  end
-		player.step=0
-  player.sprite=264
-  player.stopped=false
- end
+		if player.airborn == true then
+			player.speed.y = player.speed.y + player.acceleration
+		end
+		player.step = 0
+		player.sprite = 264
+		player.stopped = false
+	end
 	--up
 	if btnp(0) and not player.airborn then
-  player.airborn=true
-  player.speed.y=player.jump*-1
-   player.step=0
-  player.stopped=false
- end
+		player.airborn = true
+		player.speed.y = player.jump * -1
+		player.step = 0
+		player.stopped = false
+	end
 	--bark with z
 	if btnp(4) and not player.barking then
-  sfx(0)
-		player.barking=true
-  player.stopped=false 
- end
+		sfx(0)
+		player.barking = true
+		player.stopped = false
+	end
 end
 
 function player_stopped()
 	--stnading sprite
 	if player.stopped then
-  player.step=0
-  player.sprite=260
- end
+		player.step = 0
+		player.sprite = 260
+	end
 end
 
 function player_jump()
 	--jump animation
 	if player.airborn and not player.barking then
-  player.sprite=262
- end
+		player.sprite = 262
+	end
 end
 
 function player_bark()
 	--bark animation
 	if player.barking then
-  if player.airborn then
-   player.sprite=270
-  else
-  	player.sprite=268
-  end
-  frame_count=frame_count+1
-  if frame_count>10 then
-   frame_count=0
-   player.barking=false
+		if player.airborn then
+			player.sprite = 270
+		else
+			player.sprite = 268
+		end
+		frame_count = frame_count + 1
+		if frame_count > 10 then
+			frame_count = 0
+			player.barking = false
 			sfx(-1)
-  end
+		end
 	end
 end
 
 function player_speed()
 	--player movement speed
-	if player.speed.x>player.max_speed then
- 	player.speed.x=player.max_speed
- end
- if player.speed.x<player.max_speed*-1 then
-  player.speed.x=player.max_speed*-1
- end
- player.x=player.x+player.speed.x
- player.y=player.y+player.speed.y
+	if player.speed.x > player.max_speed then
+		player.speed.x = player.max_speed
+	end
+	if player.speed.x < player.max_speed * -1 then
+		player.speed.x = player.max_speed * -1
+	end
+	player.x = player.x + player.speed.x
+	player.y = player.y + player.speed.y
 end
 
 function apply_gravity()
 	--apply gravity
- player.speed.y=player.speed.y+gravity
+	player.speed.y = player.speed.y + gravity
 end
 
 function apply_friction()
 	--apply friction
 	if not player.airborn and not btn(2) and not btn(3) then
-  player.speed.x=player.speed.x/friction
- end
+		player.speed.x = player.speed.x / friction
+	end
 end
 
 function player_position()
 	--checking player position against screen bounds
-	if player.x<0 then
-	 player.dead=true
+	if player.x < 0 then
+		player.dead = true
 	end
-	if player.x+player.width>screen.width_pixel then
-	 player.x=screen.width_pixel-player.width
+	if player.x + player.width > map_level.width_pixel then
+		player.x = map_level.width_pixel - player.width
 	end
-	if player.y<0 then
-	  player.y=0
+	if player.y < 0 then
+		player.y = 0
 	end
-	if player.y>screen.height_pixel then
-		player.dead=true
+	if player.y > map_level.height_pixel then
+		player.dead = true
 	end
 end
 
 function player_facing()
 	--change sprite with facing
-	if player.direction==1 then
-		player.flip=0
+	if player.direction == 1 then
+		player.flip = 0
 	else
-		player.flip=1
+		player.flip = 1
 	end
 end
 
-function check_right_sink()
-	if solid(player.x+16,player.y) then
-		player.x=player.x-1
+function check_side_sink()
+	if solid(player.x + 16, player.y) then
+		player.x = player.x - 1
+	elseif solid(player.x, player.y) then
+		player.x = player.x + 1
 	end
 end
 
 function check_sink()
-	if solid(player.x+1,player.y+15)
-		or solid(player.x+15,player.y+15) then
-		player.y=player.y-1
+	if solid(player.x + 1, player.y + 15) or solid(player.x + 15, player.y + 15) then
+		player.y = player.y - 1
 	end
 end
 
 function smooth_update_map()
 	if game_running then
-		cam_count=cam_count+1
-		if cam_count==3 then
-			cam_place=cam_place-1
-			player.x=player.x-1
-			cam_count=0
-			if cam_place==-8 then
-				cam_place=0
-				map_level.x=map_level.x+1
-				if map_level.x==238 then
-					map_level.x=0
-					map_level.y=map_level.y+17
+		cam_count = cam_count + 1
+		if cam_count == 3 then
+			cam_place = cam_place - 1
+			player.x = player.x - 1
+			cam_count = 0
+			if cam_place == -8 then
+				cam_place = 0
+				map_level.x = map_level.x + 1
+				if map_level.x == 238 then
+					map_level.x = 0
+					map_level.y = map_level.y + 17
 				end
-				if map_level.x==238 and map_level.y==119 then
-					game_win=true
+				if map_level.x == 238 and map_level.y == 119 then
+					game_win = true
 				end
- 		end
+			end
 		end
 	end
 end
 
 function update_map()
 	if game_running then
-		map_count=map_count+1
- 	if map_count==24 then
-			map_level.x=map_level.x+1
-			map_count=1
-	-- this is causing floating
---			if not player.airborn then
-				player.x=player.x-8
---			end
+		map_count = map_count + 1
+		if map_count == 24 then
+			map_level.x = map_level.x + 1
+			map_count = 1
+			-- this is causing floating
+			--			if not player.airborn then
+			player.x = player.x - 8
+		--			end
 		end
-		if map_level.x==210 then
-			map_level.x=0
-			map_level.y=map_level.y+17
+		if map_level.x == 210 then
+			map_level.x = 0
+			map_level.y = map_level.y + 17
 		end
-		if map_level.x==150 and map_level.y==0 then
-			game_win=true
+		if map_level.x == 150 and map_level.y == 0 then
+			game_win = true
 		end
---		if map_level.x==210 and map_level.y==119 then
---			game_win=true
---		end
+	--		if map_level.x==210 and map_level.y==119 then
+	--			game_win=true
+	--		end
 	end
 end
 
 function confetti()
---implement confetti
-	if game_win==true then
+	--implement confetti
+	if game_win == true then
 	end
 end
 
 function player_lives()
 	if game_running then
-		if player.lives==3 then
-			spr(288,5,10,0)
-			spr(288,14,10,0)
-			spr(288,23,10,0)
+		if player.lives == 3 then
+			spr(288, 5, 10, 0)
+			spr(288, 14, 10, 0)
+			spr(288, 23, 10, 0)
 		end
-		if player.lives==2 then
-			spr(288,5,10,0)
-			spr(288,14,10,0)
-			spr(289,23,10,0)
+		if player.lives == 2 then
+			spr(288, 5, 10, 0)
+			spr(288, 14, 10, 0)
+			spr(289, 23, 10, 0)
 		end
-		if player.lives==1 then
-			spr(288,5,10,0)
-			spr(289,14,10,0)
-			spr(289,23,10,0)
+		if player.lives == 1 then
+			spr(288, 5, 10, 0)
+			spr(289, 14, 10, 0)
+			spr(289, 23, 10, 0)
 		end
-		if player.lives==0 then
-			player.dead=true
+		if player.lives == 0 then
+			player.dead = true
 		end
 	end
 end
 
 function status_effect()
-	if player.slow==true or player.fast==true then
-		print(status_countdown,5,20,title_action_color)
+	if player.slow == true or player.fast == true then
+		print(status_countdown, 5, 20, title_action_color)
 	end
 end
 
 function TIC()
-	--removed cam_place at end of map
-	map(map_level.x, map_level.y, map_level.width+1, map_level.height)
+	--remove cam_place at end of map if not smooth update
+	map(map_level.x, map_level.y, map_level.width + 1, map_level.height, cam_place, 0)
 	spr(player.sprite, player.x, player.y, 0, 1, player.flip, 0, player.width, player.height)
- --smooth_update_map()	
-	update_map()
+	smooth_update_map()
+	--update_map()
 	update()
 	draw()
-	
-	player.moving=false
- player.stopped=true
 
+	player.moving = false
+	player.stopped = true
+
+	check_side_sink()
 	player_movement()
 	player_stopped()
 	player_jump()
@@ -561,22 +471,20 @@ function TIC()
 	player_position()
 	player_facing()
 	player_lives()
-	
+
 	apply_gravity()
 	apply_friction()
 	status_effect()
 	confetti()
-	
-	player_pickup_heal()
-	player_pickup_hurt()
-	player_pickup_slow()
+
+	check_pickup()
+
 	player_speed_slow()
 	player_speed_fast()
-	player_pickup_fast()
-	player_can_move()	
+	player_can_move()
 	player_speed()
-	--check_right_sink()
- check_sink()
+	check_side_sink()
+	check_sink()
 end
 
 -- <TILES>
@@ -911,4 +819,3 @@ end
 -- <COVER>
 -- 000:22c000007494648393160f00880077000012ffb0e45445353414055423e2033010000000129f40402000ff00c2000000000f00880078ea5a5ad6aac2435642c4828158c403c00000ad4de52dd7c22daa996dc49600000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000080ff001080c1840b0a1c388031a2c58c0b1a3c780132a4c9841b2a5cb88133a6cd8c1b3a7cf80234a8c1942b4a9c398235aac59c2b5abc790336acc9943b6adcb98337aecd9c3b767c000438205f944b8eac00204002d4a20c8a3d7a2239e009a206004dba853365daa30ab63dca063ce3cea3080095ba263daa53876fcead7bb6bc6b54b07be66d9b66deaedba37bba051ab7307e49bd679e2d4a28317dceb357be65aba832bbceb40e139dfa2933fa42b661fab5dc0a152366c1ab47942cd6b3f763dcaf3a76fcda3677c1dd7d9618bd8b37fd628abb73e618eb573fe0efb702171e0715f955d46d6b187e0df9f1830508774fbe606a75700500bb47ae6ddbb6fff0fed3b38f4e4bbda371f7e1879ffebdbb3bfdeee7e397bf8e3535e5f3d7a3cfddcdd77dfd100f5d730e084f5086ed18de928c06189f137c9da6449c7f0a971f908df14861238d0678c062802e68816d59e9a7645787b9f752a384d1e6c1ef78c918f2ec8e26e601eb5acd4882615a22c8d2aa8436688160734a1973e0962ae70b5a813609f4e8773ac715eb81d949246299fd98099f495e7955219ad1590561975e97066b8a3a48d51b9cf5d89626916610c2ac9546d986689b4279d56f4f3a68262c9372e918ea84069936ed6936c5fa5a6be167806d75e9d9396e9fe15a8f9e8d625641a79596174624a69e7a292e71ae5725a6ac7ad6e16f7226ba1927ff70baba0cdca85adad0aa5b3e6ad36583beba6b6c78ba0b1c6da5ce69cbae76bd172223b00a3bfc24b0c94b8c6a72bd5b91deabb26bcd654c767506108c05280198b1199ba817a87dd45d5c75cd071d2d70aa17fe2db1f6bb1fd4beeedbdee4bcddbb00377e41f8c428b535fb20ffb509bba0b0cc0bdb7013c217ebbb55c9f63c90b5c0c92c5172c64d7bd7e1cef2f6efe3bff6dbafe2c5279c8030c71b8b313cb1696be6ee49b91473f9cb073b8eaebbf2ebc3f8c2fedb817ac7751cbc58c961acddab6fd63d05f85c6e6b1575da018c6576d709abe8a6de5b044072ddcd7de536d46b6d43fc5763ad84f48b676d66fbd157addbacddd6cd67fddd8e279734ffd1678dd773d8770e2b1ddd921edadede632e7de0ec8b9668f8dd47fce015e9095e0593ece28ae2f0d44f0754f9c1f64cfb127737ec63265c53fdc399cea3eba3b1d8335e03f5c013db6c1bcb178e7474ee725c14bcc2bfdeb33eee1b0f03bee0a7a5a9bd48a39bc9f7e0a3de3afec6e64f0bb5f2654e60bdc4ee3ee4b8dac28f98f3d429250e3af8317fa4774a4500f8fbfbeb9f221251412e6ff0563daec9d84789cfd7bff9ef862f7b465bf432c494060e218c49df1dfe32ff36a0cfce611c4ac40762ceb8a030d2871c5bd6093840c6bd6a02851490e00db6049f0270b38f296e114858d09d06a031872cca9c032853c69460f0271481e24a4851cc124dff08873c8943f4d70f312a14a4861cf0a6d898a41722c48f7d6a48cbf29813451270b18e53d2e611138143020e412944cc824cb823ce22a196816c551240e7154980a159855b93af0952b3c38441fe8b01b32d1b96e74e3a86448279e3a02978b6431e1236305cb1e2274202bfb842ff2d0991622d28e5ac9d94c2979c74a848d7681a16319b846cb4281d74408204a2152d8cd06b19b44597c4c27a2704004b2d59edb765a2359893e8cd2918fac20695c23e5126e45a49a2c02ef11627b120ca29b380076a33b7991182a23d3942116e4d6b9783b22d0fa9931552f218380040883310fd3d0a90d1964409d30199fdcf0e23b52aa4895935a9fcc298235e98ffdc090bf2f80fce4ec35525f4dd4431f99e480a9275839124273b94901e4ec1d6640827ed31f9cbc48af2f79894998b3fd960958e51b29b0130c04c4aa1966e5413a9fcf80a4100f2d53edf822dfc58cf3f1addc73ef276a509e12344006008fdb41322e469a33dc93210aa05502b3d1823570253dbad749b4f095a000693ec4602f4702844b52f113904d49a15f8a845d02c1d4a881ca656eb9e9ceaa355aae05a2695cb52d488c849f886583e64ae96e4cdce29a9719cb200cc83092b83313277dc698171beb3a845152256c2522568a711eb6c7efa421bf5859d2375d8446132355aaa36b3b55d1c225ec814dcf985b0056da76b4f32a455d614e1b71183ffe963b58351f9e6bb7211ada346f8d7c62e2598a915d7db6d322144f156d7b5110ea64417c85e62d59003115f912fda3eae913d06bb5d2ce1611815d48486f4439c2fa97fcb8ed4faa77dbced6fab7fdb0fd8f2c7f6a45c056273a87f510e82749af5cf2f7549ef5cf6f770c006207e7b0c80e30b28ffbb061072891c016707387cb9e995a36a134b4b03689a2b1695e58f3ce1ed077833cf1e1138894c226d0ba8b4cb2e413b8f5ce2e81378b5c33e21bc537bc9136278f23a3ee13d297cf3e2660954c046ea809d8c44e32f9567ca4e22f29d7c846627297ac25ea2349f9c34ea2b63f6cc568e2d7dbc83e8e6793ea06e13fe65cc56e433587dcc6e63bb9fffdc07e83bc974316ef2399fec766b37e9becc7633f695dcb76f33361fcf76243a9d0da7e2470a10da8e64f1a71d88e9adc972d49ea4b5af2d59ee333af1de8e4437af3de9e05b6a32d286c4b9af4d8ae45baa9635760b5c5d5d0ae1534a76dd96957dab4d6be85f2ecbb2934d014a334018c81c2f24aed4b8a17d8c6367eaf8d4b185b5beaa659863a56ad1de06faafad8dec6bb399306390516f334c68638dc9dea68633bb8d8e6a5bea59d9ce477d6cad1d58770bbbd60307d2bfedde657f9b5fd8f667b6bffd00f08b6bbfdc4285357dcdbe67772c9fd9feb5bfb51e822a67fab75cbde2dbb5cdfd618b6c73e39ec8b0313e479fc412bcd2ee96357f1ec0ce749b3c12e40f4971c08dea65d0fa1c55fec8f1c54e4d600cdc5add2f59bbcf7ee3f0af2c5895374873bfbd2fe1732d94e437e8b3df9ef1de9f0d7aebf61a75d9ae25ff72bc7f364fcab7db1e8570bf5dff93fe5a3ca19edc988b4b1de937f878c54e6ee5a73ddde05fab3b956e547a979b1d21eea635c7ad3ee2a77d9353bddbb042cd75576b5dfbea2f0bb1bdd297f1b1ec31f0fea775b9cd9177bb6edfe68f4c77fcee0af9379d74880f3836c77e29f5bb2e59e137ea97e13e0bf5d43e7cec8fdaba9b6fb76f83ee71f26fddb3e11d1af0eb0f53eeb7ad7fef8f3bf2e76dd6fcc70affed9f6cf4e32b302000b3
 -- </COVER>
-
