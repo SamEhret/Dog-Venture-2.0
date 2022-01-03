@@ -6,4 +6,4 @@ WIP of an adventure dog who will dodge obstacles, collect items, and bark!!
 https://github.com/SamEhret/dog-venture
 
 # Demo
-https://tic.computer/play?cart=453
+https://tic80.com/play?cart=453
